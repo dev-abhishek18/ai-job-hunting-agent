@@ -4,3 +4,4 @@ pydantic
 requests
 pypdf
 python-multipart
+streamlit
