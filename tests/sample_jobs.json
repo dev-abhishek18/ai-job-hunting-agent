@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Data Analyst",
+    "company": "Example Analytics",
+    "location": "Noida",
+    "work_mode": "Hybrid",
+    "description": "Looking for a Data Analyst with SQL, Power BI, Python, Excel and ETL experience. 3-5 years experience.",
+    "experience_min": 3,
+    "experience_max": 5,
+    "source": "example_company",
+    "job_url": "https://example.com/jobs/data-analyst-001",
+    "posted_at": "2026-09-06T10:00:00+00:00"
+  },
+  {
+    "title": "BI Analyst",
+    "company": "Example BI",
+    "location": "Gurgaon",
+    "work_mode": "On-site",
+    "description": "BI Analyst role requiring SQL, Power BI, DAX and Excel. 2-4 years experience.",
+    "experience_min": 2,
+    "experience_max": 4,
+    "source": "example_company",
+    "job_url": "https://example.com/jobs/bi-analyst-002",
+    "posted_at": "2026-09-06T12:00:00+00:00"
+  }
+]
