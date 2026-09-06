@@ -5,3 +5,4 @@ requests
 pypdf
 python-multipart
 streamlit
+python-dotenv
