@@ -1,11 +1,31 @@
-# Job Hunting Agent MVP v4
+# AI Job Hunting Agent MVP v4
 
-This version focuses on the core rule: **only genuinely new jobs posted in the last 24 hours** should be surfaced.
+CV-driven job hunting agent with 24-hour freshness filtering, duplicate protection, candidate profiles and a browser dashboard.
 
 ## Candidate
 - Data Analyst, SQL Developer, BI Analyst, Reporting Analyst, MIS Analyst, Database Administrator
 - Delhi NCR, Noida, Gurgaon/Gurugram, Delhi, Remote
 - Current profile: 4 years total experience
+
+## Browser dashboard
+The project now includes a Streamlit UI for local browser testing:
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Then open the local URL shown by Streamlit (normally `http://localhost:8501`).
+
+The dashboard supports:
+- Upload a PDF CV and create a candidate profile
+- Update an existing profile with a newer CV
+- View extracted roles, skills, experience and CV version
+- See CV change detection after an update
+- Run the configured job collectors
+- View match score, recommendation, matched/missing skills
+- Open the application link
+- Mark candidate-specific jobs as seen
 
 ## Sources
 - Adzuna: requires `ADZUNA_APP_ID` + `ADZUNA_APP_KEY`
@@ -31,20 +51,25 @@ This version focuses on the core rule: **only genuinely new jobs posted in the l
 - If only 4 new relevant jobs exist, the report contains 4.
 - Old jobs are **never** used to pad the daily list.
 
-## Run
+## FastAPI API
 ```bash
-pip install -r requirements.txt
-copy .env.example .env   # Windows
-python run_daily.py
+uvicorn app.main:app --reload
 ```
 
-For Linux/macOS:
-```bash
-cp .env.example .env
-python run_daily.py
-```
+Useful endpoints:
+- `GET /` — health/status
+- `POST /profiles/from-cv` — create profile from PDF
+- `POST /profiles/{profile_id}/cv` — update CV/profile
+- `GET /profiles/{profile_id}` — inspect profile
+- `POST /jobs/ingest?profile_id=1` — ingest and score a job
+- `GET /profiles/{profile_id}/jobs` — candidate NEW jobs
+- `POST /profiles/{profile_id}/jobs/{job_id}/mark-seen` — mark seen
+- `POST /daily/run?profile_id=1` — run daily collection
 
 ## Tests
 ```bash
 python -m pytest -q
 ```
+
+## Important current limitation
+The Streamlit dashboard is a local testing UI. The job source credentials/board configuration still need to be supplied in `.env`, and the daily collector currently has a global job-match storage limitation for true multi-candidate production use. This version is intended for validating the workflow before the next hardening pass.
