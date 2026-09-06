@@ -8,7 +8,12 @@ from .profile_repository import attach_job
 
 
 def collect_daily(collectors: list, target_count: int = 10, candidate: dict | None = None, candidate_id: int | None = None):
-    candidate = candidate or CANDIDATE
+    # Profile records may not yet contain newer search-preference fields; inherit safe defaults.
+    merged_candidate = dict(CANDIDATE)
+    if candidate:
+        merged_candidate.update(candidate)
+    candidate = merged_candidate
+
     seen_in_run = set()
     inserted = duplicates = rejected = 0
     attached = 0
@@ -38,7 +43,7 @@ def collect_daily(collectors: list, target_count: int = 10, candidate: dict | No
             save_match(row["id"], result)
 
             if candidate_id is not None:
-                was_attached, status = attach_job(candidate_id, row["id"])
+                was_attached, _status = attach_job(candidate_id, row["id"])
                 if was_attached:
                     attached += 1
                 else:
