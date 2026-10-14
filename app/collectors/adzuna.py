@@ -27,5 +27,5 @@ class AdzunaCollector(JobCollector):
                     jobs.append({"title": item.get("title", ""), "company": (item.get("company") or {}).get("display_name", ""),
                                  "location": (item.get("location") or {}).get("display_name", ""), "work_mode": "",
                                  "description": item.get("description", ""), "experience_min": None, "experience_max": None,
-                                 "source": "adzuna", "job_url": item.get("redirect_url", ""), "posted_at": item.get("created")})
+                                 "source": "adzuna", "job_url": item.get("redirect_url", ""), "posted_at": item.get("created"), "requisition_id": str(item.get("id") or "")})
         return jobs
