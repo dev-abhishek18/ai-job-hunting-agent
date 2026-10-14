@@ -45,7 +45,7 @@
     "never_invent_posting_dates_or_apply_links": true
   },
   "deduplication": {
-    "keys_in_order": ["requisition_id", "canonical_apply_url", "company_title_location_fingerprint"],
+    "keys_in_order": ["source_plus_requisition_id", "canonical_apply_url", "content_fingerprint"],
     "suppress_previously_reported_days": 7,
     "allow_repeat_only_if": "A genuinely new requisition ID or employer-confirmed repost is found."
   },
