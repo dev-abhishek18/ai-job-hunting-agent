@@ -17,5 +17,5 @@ class GreenhouseBoardCollector(JobCollector):
                          "location": (item.get("location") or {}).get("name", ""), "work_mode": "",
                          "description": item.get("content", ""), "experience_min": None, "experience_max": None,
                          "source": self.source_name, "job_url": item.get("absolute_url", ""),
-                         "posted_at": item.get("first_published_at")})
+                         "posted_at": item.get("first_published_at"), "requisition_id": str(item.get("id") or "")})
         return jobs
