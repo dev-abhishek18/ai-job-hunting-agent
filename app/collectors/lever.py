@@ -28,5 +28,5 @@ class LeverBoardCollector(JobCollector):
                          "description": item.get("descriptionPlain") or item.get("description", ""),
                          "experience_min": None, "experience_max": None, "source": self.source_name,
                          "job_url": item.get("hostedUrl") or item.get("applyUrl") or "",
-                         "posted_at": ms_to_iso(item.get("createdAt"))})
+                         "posted_at": ms_to_iso(item.get("createdAt")), "requisition_id": str(item.get("id") or "")})
         return jobs
