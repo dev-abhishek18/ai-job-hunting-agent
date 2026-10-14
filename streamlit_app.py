@@ -1,5 +1,7 @@
 import streamlit as st
 
+from app.config import settings
+from app.candidate import CANDIDATE
 from app.database import init_db
 from app.profile_repository import create_profile, get_profile, update_profile, candidate_jobs, mark_candidate_seen
 from app.cv_parser import parse_cv
@@ -10,7 +12,7 @@ st.set_page_config(page_title="AI Job Hunting Agent", page_icon="🎯", layout="
 init_db()
 
 st.title("🎯 AI Job Hunting Agent")
-st.caption("CV-driven job matching • 24-hour freshness • duplicate protection • multi-source search")
+st.caption("CV-driven job matching • rolling 48-hour freshness • freshness tiers • duplicate protection")
 
 if "profile_id" not in st.session_state:
     st.session_state.profile_id = None
@@ -35,6 +37,8 @@ with st.sidebar:
         with open(tmp_path, "wb") as f:
             f.write(cv.getbuffer())
         parsed = parse_cv(tmp_path)
+        # Keep CV-derived skills but retain all requested search roles.
+        parsed["target_roles"] = list(dict.fromkeys(list(parsed.get("target_roles", [])) + list(CANDIDATE["target_roles"])))
         parsed["preferred_locations"] = ["Delhi NCR", "Noida", "Gurgaon", "Gurugram", "Delhi", "Remote"]
         if cv_mode == "Create profile":
             p = create_profile(parsed, cv.name)
@@ -83,7 +87,7 @@ if st.button("Run Job Search Now", type="primary"):
         try:
             result = collect_daily(
                 configured_collectors(),
-                target_count=10,
+                target_count=settings.target_count,
                 candidate=profile,
                 candidate_id=pid,
             )
@@ -94,7 +98,8 @@ if st.button("Run Job Search Now", type="primary"):
 
 result = st.session_state.get("daily_result")
 if result:
-    st.write(f"**New jobs found:** {result.get('new_relevant_jobs', len(result.get('jobs', [])))} / {result.get('target_count', 10)}")
+    st.write(f"**New jobs found:** {result.get('new_relevant_jobs', len(result.get('jobs', [])))} / {result.get('target_count', settings.target_count)}")
+    st.caption("VERIFIED_FRESH = dated ATS feed • LIKELY_FRESH = dated aggregator listing • DATE_UNCONFIRMED = separate lead, not counted as fresh")
     if result.get("source_errors"):
         st.warning("One or more job sources failed:")
         st.json(result["source_errors"])
@@ -106,7 +111,7 @@ if result:
             with a:
                 st.markdown(f"### {job.get('title', 'Untitled')}")
                 st.write(f"**{job.get('company', '')}** • {job.get('location', '')}")
-                st.caption(f"Posted: {job.get('posted_at', 'unknown')} • Match: {score} • {rec}")
+                st.caption(f"Posted: {job.get('posted_at', 'unknown')} • Freshness: {job.get('freshness_tier', 'unknown')} • Match: {score} • {rec}")
                 if job.get("matched_skills"):
                     st.write("Matched skills:", ", ".join(job["matched_skills"]))
                 if job.get("missing_skills"):
@@ -114,6 +119,17 @@ if result:
             with b:
                 if job.get("job_url"):
                     st.link_button("Apply / Open", job["job_url"], use_container_width=True)
+
+    leads = result.get("date_unconfirmed_leads", [])
+    if leads:
+        st.subheader("🟡 Relevant leads — posting date unconfirmed")
+        st.caption("These are not counted as fresh jobs. Check the employer page's original posting date before applying.")
+        for job in leads:
+            with st.container(border=True):
+                st.markdown(f"**{job.get('title', 'Untitled')}** — {job.get('company', '')}")
+                st.write(job.get("location", ""))
+                if job.get("job_url"):
+                    st.link_button("Open listing to verify date", job["job_url"])
 
 st.subheader("📌 Stored New Matches")
 if not jobs:
