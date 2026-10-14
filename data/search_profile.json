@@ -1,0 +1,57 @@
+{
+  "profile_name": "Abhishek Pal - Data & SQL Jobs",
+  "updated_at": "2026-10-14",
+  "schedule": {
+    "local_timezone": "Asia/Kolkata",
+    "preferred_run_time": "17:00"
+  },
+  "search": {
+    "freshness_hours": 48,
+    "target_minimum": 10,
+    "target_maximum": 20,
+    "never_pad_with_old_jobs": true,
+    "locations": ["Delhi NCR", "Noida", "Gurgaon", "Gurugram", "Delhi", "Remote"],
+    "experience_years_min": 1,
+    "experience_years_max": 3,
+    "allow_strong_adjacent_roles": true,
+    "exclude_title_terms": ["senior", "lead", "manager", "director", "principal", "architect"],
+    "primary_roles": [
+      "Data Analyst", "SQL Developer", "SQL Data Analyst", "MIS Analyst",
+      "MIS Executive", "Reporting Analyst", "Power BI Analyst", "BI Analyst"
+    ],
+    "secondary_roles": [
+      "ETL Developer", "SQL Developer ETL", "Database Developer",
+      "Junior Database Administrator", "Data Reporting Analyst",
+      "Data Quality Analyst", "Business Intelligence Analyst",
+      "Operations Analyst", "Reporting Executive"
+    ],
+    "priority_skills": [
+      "SQL", "SQL Server", "Excel", "Power BI", "DAX", "Python",
+      "ETL", "Power Query", "Reporting", "Database Administration",
+      "Data Analysis", "Stored Procedures", "Query Optimization"
+    ]
+  },
+  "sources": {
+    "job_boards_for_discovery": ["LinkedIn", "Naukri", "Indeed", "Foundit", "Internshala", "Jooble", "Adzuna", "Joblet.ai"],
+    "verify_apply_link_at": ["Employer career pages", "Greenhouse", "Lever", "Ashby", "Workday"],
+    "configured_public_apis": ["Adzuna", "Greenhouse", "Lever", "Ashby"],
+    "jooble_policy": "Discovery only; verify the same requisition and live application URL at the employer or original source before marking verified."
+  },
+  "freshness_policy": {
+    "verified_fresh": "Original employer/ATS posting or creation date is within the rolling 48-hour window and the application page is live.",
+    "likely_fresh": "A specific listing has recent dated evidence, a unique requisition/job ID, a live apply page, and no older duplicate found; label as likely fresh, not verified.",
+    "date_unconfirmed": "Relevant live listing without trustworthy original posting date; show separately and never count toward verified-fresh total.",
+    "never_use_crawler_refresh_as_posted_date": true,
+    "never_invent_posting_dates_or_apply_links": true
+  },
+  "deduplication": {
+    "keys_in_order": ["requisition_id", "canonical_apply_url", "company_title_location_fingerprint"],
+    "suppress_previously_reported_days": 7,
+    "allow_repeat_only_if": "A genuinely new requisition ID or employer-confirmed repost is found."
+  },
+  "reporting": {
+    "include": ["company", "title", "location", "experience", "original_posted_date", "freshness_tier", "source", "live_apply_url", "matched_skills", "missing_skills", "cv_match_reason"],
+    "target_count_is_a_ceiling_not_a_quota": true,
+    "report_source_errors_and_verified_fresh_count": true
+  }
+}
