@@ -14,17 +14,23 @@ def upsert_job(job: dict):
     now = now_iso()
     conn = get_connection()
     existing = None
-    if canonical_url:
+    requisition_id = str(job.get("requisition_id") or "").strip()
+    if requisition_id:
+        existing = conn.execute(
+            "SELECT id FROM jobs WHERE source = ? AND requisition_id = ?",
+            (job.get("source", ""), requisition_id),
+        ).fetchone()
+    if not existing and canonical_url:
         existing = conn.execute("SELECT id FROM jobs WHERE canonical_url = ?", (canonical_url,)).fetchone()
     if not existing:
         existing = conn.execute("SELECT id FROM jobs WHERE fingerprint = ?", (fingerprint,)).fetchone()
     if existing:
         conn.execute(
-            """UPDATE jobs SET last_seen_at=?, canonical_url=?, title=?, company=?, location=?,
+            """UPDATE jobs SET last_seen_at=?, canonical_url=?, requisition_id=?, title=?, company=?, location=?,
                work_mode=?, description=?, experience_min=?, experience_max=?, source=?, job_url=?, posted_at=? WHERE id=?""",
             (
-                now, canonical_url, job["title"], job["company"], job.get("location", ""), job.get("work_mode", ""),
-                job["description"], job.get("experience_min"), job.get("experience_max"), job["source"], job["job_url"],
+                now, canonical_url, requisition_id or None, job["title"], job["company"], job.get("location", ""), job.get("work_mode", ""),
+                job.get("description") or "", job.get("experience_min"), job.get("experience_max"), job["source"], job["job_url"],
                 job.get("posted_at"), existing["id"],
             ),
         )
@@ -34,12 +40,12 @@ def upsert_job(job: dict):
         return dict(row), False
 
     cur = conn.execute(
-        """INSERT INTO jobs (fingerprint, canonical_url, title, company, location, work_mode, description,
+        """INSERT INTO jobs (fingerprint, canonical_url, requisition_id, title, company, location, work_mode, description,
             experience_min, experience_max, source, job_url, posted_at, first_seen_at, last_seen_at, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW')""",
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW')""",
         (
-            fingerprint, canonical_url, job["title"], job["company"], job.get("location", ""), job.get("work_mode", ""),
-            job["description"], job.get("experience_min"), job.get("experience_max"), job["source"], job["job_url"],
+            fingerprint, canonical_url, requisition_id or None, job["title"], job["company"], job.get("location", ""), job.get("work_mode", ""),
+            job.get("description") or "", job.get("experience_min"), job.get("experience_max"), job["source"], job["job_url"],
             job.get("posted_at"), now, now,
         ),
     )
