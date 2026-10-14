@@ -11,12 +11,14 @@ def get_connection():
 def init_db():
     conn = get_connection()
     conn.execute("""CREATE TABLE IF NOT EXISTS jobs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, fingerprint TEXT NOT NULL UNIQUE, canonical_url TEXT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT, fingerprint TEXT NOT NULL UNIQUE, canonical_url TEXT, requisition_id TEXT,
         title TEXT NOT NULL, company TEXT NOT NULL, location TEXT, work_mode TEXT, description TEXT NOT NULL,
         experience_min REAL, experience_max REAL, source TEXT NOT NULL, job_url TEXT NOT NULL, posted_at TEXT,
         first_seen_at TEXT NOT NULL, last_seen_at TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'NEW')""")
     columns = {row[1] for row in conn.execute("PRAGMA table_info(jobs)").fetchall()}
     if "canonical_url" not in columns: conn.execute("ALTER TABLE jobs ADD COLUMN canonical_url TEXT")
+    if "requisition_id" not in columns: conn.execute("ALTER TABLE jobs ADD COLUMN requisition_id TEXT")
+    conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS ux_jobs_source_requisition ON jobs(source, requisition_id) WHERE requisition_id IS NOT NULL AND requisition_id != ''")
     conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS ux_jobs_canonical_url ON jobs(canonical_url) WHERE canonical_url IS NOT NULL AND canonical_url != ''")
     conn.execute("""CREATE TABLE IF NOT EXISTS job_matches (
         id INTEGER PRIMARY KEY AUTOINCREMENT, job_id INTEGER NOT NULL UNIQUE, role_score REAL NOT NULL,
