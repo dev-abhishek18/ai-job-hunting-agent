@@ -10,7 +10,7 @@ class Settings:
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./jobs.db")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     job_location: str = os.getenv("JOB_LOCATION", "Delhi NCR")
-    target_count: int = int(os.getenv("JOB_TARGET_COUNT", "10"))
-    freshness_hours: int = int(os.getenv("JOB_FRESHNESS_HOURS", "24"))
+    target_count: int = int(os.getenv("JOB_TARGET_COUNT", "20"))
+    freshness_hours: int = int(os.getenv("JOB_FRESHNESS_HOURS", "48"))
 
 settings = Settings()
