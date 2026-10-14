@@ -2,6 +2,7 @@ import tempfile
 from fastapi import FastAPI, UploadFile, File, HTTPException
 
 from .config import settings
+from .candidate import CANDIDATE
 from .database import init_db
 from .models import JobIn
 from .repository import upsert_job, save_match
@@ -49,6 +50,7 @@ async def create_profile_from_cv(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(400, "Only PDF CV files are supported")
     parsed = _parse_upload(await file.read())
+    parsed["target_roles"] = list(dict.fromkeys(list(parsed.get("target_roles", [])) + list(CANDIDATE["target_roles"])))
     parsed["preferred_locations"] = ["Delhi NCR", "Noida", "Gurgaon", "Gurugram", "Delhi", "Remote"]
     return {"profile": create_profile(parsed, file.filename), "parsed": parsed}
 
