@@ -1,4 +1,4 @@
-# AI Job Hunting Agent MVP v4
+# AI Job Hunting Agent MVP v5
 
 CV-driven job hunting agent with expanded role searches, rolling 48-hour freshness checks, duplicate protection, candidate profiles and a browser dashboard.
 
@@ -33,7 +33,7 @@ The dashboard supports CV upload/versioning, extracted skills and roles, CV chan
 - Crawler refresh time is never substituted for a posting date. Missing or old dates are not treated as verified fresh.
 
 ## Duplicate and report behavior
-- Canonical URL and job fingerprint prevent repeated collection.
+- Source + requisition ID is checked first when available, then canonical URL, then content fingerprint.
 - Jobs already stored are not returned as new results in later runs.
 - Up to 20 new jobs are returned; fewer are reported honestly when fewer qualify.
 - Source errors and date-unconfirmed leads are exposed separately in the daily result.
