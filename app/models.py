@@ -12,6 +12,7 @@ class JobIn(BaseModel):
     source: str
     job_url: str
     posted_at: Optional[str] = None
+    requisition_id: Optional[str] = None
 
 class JobOut(JobIn):
     id: int
