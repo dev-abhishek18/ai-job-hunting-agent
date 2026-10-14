@@ -1,6 +1,7 @@
 import tempfile
 from fastapi import FastAPI, UploadFile, File, HTTPException
 
+from .config import settings
 from .database import init_db
 from .models import JobIn
 from .repository import upsert_job, save_match
@@ -12,8 +13,8 @@ from .daily_config import configured_collectors
 
 app = FastAPI(
     title="AI Job Hunting Agent",
-    version="0.6.0",
-    description="CV-driven personalized job hunting agent.",
+    version="0.7.0",
+    description="CV-driven personalized job hunting agent with 48-hour freshness tiers.",
 )
 
 
@@ -26,12 +27,13 @@ def startup():
 def root():
     return {
         "agent": "AI Job Hunting Agent",
-        "version": "0.6.0",
+        "version": "0.7.0",
         "status": "running",
         "features": [
             "CV profiles", "CV versioning", "profile-driven matching",
-            "candidate-specific job history", "24-hour freshness filtering",
-            "duplicate protection", "multi-source collectors",
+            "candidate-specific job history", "48-hour freshness filtering",
+            "verified/likely/date-unconfirmed freshness tiers",
+            "duplicate protection", "Adzuna + Greenhouse + Lever + Ashby collectors",
         ],
     }
 
@@ -108,7 +110,7 @@ def daily_run(profile_id: int | None = None):
         raise HTTPException(404, "Profile not found")
     return collect_daily(
         configured_collectors(),
-        target_count=10,
+        target_count=settings.target_count,
         candidate=candidate,
         candidate_id=profile_id,
     )
